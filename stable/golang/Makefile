@@ -5,13 +5,16 @@ init-image-1.13:
 init-image-1.14:
 	docker build --no-cache -f Dockerfile.1.14.init -t kubeless/go-init:1.14 .
 
+init-image-1.17:
+	docker build --no-cache -f Dockerfile.1.17.init -t kubeless/go-init:1.17 .
+
 init-image: init-image-1.13 init-image-1.14
 
 # Runtime images
-runtime-image-1.14:
-	docker build --no-cache -f Dockerfile -t kubeless/go:1.14 .
+runtime-image-1.17:
+	docker build --no-cache -f Dockerfile -t kubeless/go:1.17 .
 
-runtime-image: runtime-image-1.14
+runtime-image: runtime-image-1.17
 
 # Push images
 push-init-1.13:
