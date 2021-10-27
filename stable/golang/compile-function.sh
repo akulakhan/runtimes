@@ -1,5 +1,5 @@
 #!/bin/bash
-GO_VERSION="1.14"
+GO_VERSION="1.17"
 
 set -e
 
@@ -16,4 +16,4 @@ sed "s/<<FUNCTION>>/${KUBELESS_FUNC_NAME}/g" /server/kubeless.go.tpl > /server/k
 cd /server
 
 # Build the function and redirect stdout & stderr from the compilation step to the k8s output log
-GOOS=linux GOARCH=amd64 go build -o $KUBELESS_INSTALL_VOLUME/server . > /dev/termination-log 2>&1
+GOOS=linux GOARCH=amd64 go build -mod=mod -o $KUBELESS_INSTALL_VOLUME/server . > /dev/termination-log 2>&1
