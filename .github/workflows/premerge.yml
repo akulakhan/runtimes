@@ -1,0 +1,49 @@
+name: Runtimes Premerge
+on: [pull_request]
+jobs:
+  build-golang-premerge:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: |
+          cd ./stable/golang
+          make build-all
+          export EXTRA_TAG="-premerge-$(git rev-parse --short HEAD)"
+          docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" || echo "Only repo editors can push images"
+          images=( 
+            'go:1.14'
+            'go-init:1.14'
+            'go-init:1.13'
+          )
+          for image in "${images[@]}"; do
+            docker tag kubeless/${image} ciscom31/${image}${EXTRA_TAG}
+            docker push ciscom31/${image}${EXTRA_TAG} || echo "Only repo editors can push images"
+          done
+  build-python-premerge:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: |
+          cd ./stable/python
+          make build-all
+          export EXTRA_TAG="-premerge-$(git rev-parse --short HEAD)"
+          docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" || echo "Only repo editors can push images"
+          images=( 
+            'python:3.6'
+            'python:3.7'
+            'python:3.8'
+          )
+          for image in "${images[@]}"; do
+            docker tag kubeless/${image} ciscom31/${image}${EXTRA_TAG}
+            docker push ciscom31/${image}${EXTRA_TAG} || echo "Only repo editors can push images"
+          done
